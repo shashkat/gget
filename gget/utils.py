@@ -171,7 +171,7 @@ def get_uniprot_seqs(server, ensembl_ids):
             logging.error(f"not able to find a uniprot_id, id_ variable is empty")
         else:
             id_ = ids[0][0]
-            
+        del sys.modules['BiomartServer']
         # MODIFICATION ENDS
         r = requests.get(server + id_ + "+AND+reviewed:true")
         if not r.ok:
