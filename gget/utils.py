@@ -158,12 +158,32 @@ def get_uniprot_seqs(server, ensembl_ids):
         # Submit server request
 
         # MODIFICATION
-        from pybiomart import Server as BiomartServer
         
-        ensembl_server = BiomartServer(host='http://www.ensembl.org')
+        # from pybiomart import Server as BiomartServer
+        
+        # ensembl_server = BiomartServer(host='http://www.ensembl.org')
 
-        dataset = (ensembl_server.marts['ENSEMBL_MART_ENSEMBL']
-                        .datasets['hsapiens_gene_ensembl'])
+        # dataset = (ensembl_server.marts['ENSEMBL_MART_ENSEMBL']
+        #                 .datasets['hsapiens_gene_ensembl'])
+
+        # Specify the Biomart server URL and dataset information
+        biomart_url = 'http://www.ensembl.org/biomart/martservice'
+        mart_name = 'ENSEMBL_MART_ENSEMBL'
+        dataset_name = 'hsapiens_gene_ensembl'
+        
+        # Define the XML query to retrieve the dataset
+        query = """
+            <!DOCTYPE Query>
+            <Query virtualSchemaName="default" formatter="TSV" header="0" uniqueRows="1" count="" datasetConfigVersion="0.6">
+                <Dataset name="{dataset}" interface="default">
+                    <Attribute name="your_attribute_here" />
+                    <!-- Add more attributes as needed -->
+                </Dataset>
+            </Query>
+        """.format(dataset=dataset_name)
+        
+        # Send the POST request to the Biomart server
+        response = requests.post(biomart_url, data=query)
         
         ids = 'accession:'+dataset.query(attributes=['uniprot_isoform'],
                     filters={'link_ensembl_transcript_stable_id':id_}).values
@@ -172,8 +192,9 @@ def get_uniprot_seqs(server, ensembl_ids):
             logging.error(f"not able to find a uniprot_id, id_ variable is empty")
         else:
             id_ = ids[0][0]
-        del ensembl_server
-        del sys.modules['pybiomart']
+        # del ensembl_server
+        # del sys.modules['pybiomart']
+
         # MODIFICATION ENDS
         r = requests.get(server + id_ + "+AND+reviewed:true")
         if not r.ok:
