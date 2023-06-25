@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from IPython.display import display, HTML
 import logging
+import sys
 
 # Add and format time stamp in logging messages
 logging.basicConfig(
