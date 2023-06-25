@@ -155,6 +155,23 @@ def get_uniprot_seqs(server, ensembl_ids):
     for id_ in ensembl_ids:
         # API documentation: https://www.uniprot.org/help/api_queries
         # Submit server request
+
+        # MODIFICATION
+        
+        ensembl_server = Server(host='http://www.ensembl.org')
+
+        dataset = (ensembl_server.marts['ENSEMBL_MART_ENSEMBL']
+                        .datasets['hsapiens_gene_ensembl'])
+        
+        ids = 'accession:'+dataset.query(attributes=['uniprot_isoform'],
+                    filters={'link_ensembl_transcript_stable_id':id_}).values
+        
+        if len(ids) == 0:
+            logging.error(f"not able to find a uniprot_id, id_ variable is empty")
+        else:
+            id_ = ids[0][0]
+            
+        # MODIFICATION ENDS
         r = requests.get(server + id_ + "+AND+reviewed:true")
         if not r.ok:
             logging.error(
