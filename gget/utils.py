@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from IPython.display import display, HTML
 import logging
-from pybiomart import Server
+from pybiomart import Server as BiomartServer
 
 # Add and format time stamp in logging messages
 logging.basicConfig(
@@ -159,7 +159,7 @@ def get_uniprot_seqs(server, ensembl_ids):
 
         # MODIFICATION
         
-        ensembl_server = Server(host='http://www.ensembl.org')
+        ensembl_server = BiomartServer(host='http://www.ensembl.org')
 
         dataset = (ensembl_server.marts['ENSEMBL_MART_ENSEMBL']
                         .datasets['hsapiens_gene_ensembl'])
